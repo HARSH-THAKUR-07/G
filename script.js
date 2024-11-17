@@ -23,7 +23,7 @@ function summarizeText() {
         maxSentences = 2;
     } else if (summaryLength === 'medium') {
         maxSentences = 5;
-    } else {
+    } else if (summaryLength === 'long') {
         maxSentences = 10;
     }
 
@@ -60,8 +60,22 @@ function summarizeText() {
     });
 
     // Sort sentences by score and select the top ones
-    const sortedSentences = sentenceScores.sort((a, b) => b.score - a.score);
-    const summary = sortedSentences.slice(0, maxSentences).map(item => item.sentence).join(' ');
+    const sortedSentences = sentenceScores.sort((a, b) => b.score - a.score).slice(0, maxSentences);
+
+    // Remove repetitions
+    const uniqueSentences = [];
+    const usedWords = new Set();
+    
+    sortedSentences.forEach(item => {
+        const sentenceWords = item.sentence.match(/\w+/g) || [];
+        const newWords = sentenceWords.filter(word => !usedWords.has(word.toLowerCase()));
+        if (newWords.length > 0) {
+            uniqueSentences.push(item.sentence);
+            sentenceWords.forEach(word => usedWords.add(word.toLowerCase()));
+        }
+    });
+
+    const summary = uniqueSentences.join(' ');
 
     // Display the summary
     document.getElementById('summary').innerText = summary;
