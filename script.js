@@ -7,12 +7,15 @@ document.getElementById('textForm').addEventListener('submit', function(event) {
 });
 
 document.getElementById('themeSwitch').addEventListener('change', function(event) {
+    const themeLabel = document.getElementById('themeLabel');
     if (event.target.checked) {
         document.body.classList.add('dark-theme');
         document.body.classList.remove('light-theme');
+        themeLabel.innerText = 'Light Theme';
     } else {
         document.body.classList.add('light-theme');
         document.body.classList.remove('dark-theme');
+        themeLabel.innerText = 'Dark Theme';
     }
 });
 
