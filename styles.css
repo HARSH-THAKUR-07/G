@@ -1,55 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BriefBox</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body class="light-theme">
-    <div class="overlay"></div>
-    <div class="particles">
-        <!-- Random Particles -->
-        <div class="particle" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
-        <div class="particle" style="top: 30%; left: 50%; animation-delay: 1s;"></div>
-        <div class="particle" style="top: 70%; left: 80%; animation-delay: 2s;"></div>
-    </div>
-    <div class="left-section">
-        <h1>BriefBox</h1>
-        <p>Welcome to a platform where clarity meets brevity. Simplify your work, focus on the essentials, and achieve more.</p>
-    </div>
-    <div class="login-container">
-        <h1>Login</h1>
-        <form id="loginForm">
-            <input type="text" placeholder="Username" required>
-            <input type="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-    </div>
-    <div class="container">
-        <header>
-            <h1>Summarize Your Text</h1>
-            <label class="switch">
-                <input type="checkbox" id="themeSwitch">
-                <span class="slider round"></span>
-            </label>
-            <span id="themeLabel">Dark Theme</span>
-        </header>
-        <form id="textForm">
-            <textarea id="inputText" rows="10" cols="50" placeholder="Enter your text here..."></textarea><br>
-            <label for="summaryLength">Summary Length:</label>
-            <select id="summaryLength">
-                <option value="short">Short</option>
-                <option value="medium">Medium</option>
-                <option value="long">Long</option>
-            </select><br>
-            <button type="submit">Summarize</button>
-        </form>
-        <div id="wordCount"></div>
-        <div id="loading" style="display:none;">Loading...</div>
-        <div id="summary"></div>
-        <button id="copyButton" style="display:none;">Copy to Clipboard</button>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+document.getElementById('textForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting and refreshing the page
+    document.getElementById('loading').style.display = 'block'; // Show loading animation
+    setTimeout(() => {
+        summarizeText();
+    }, 1000); // Simulate a delay for loading animation
+});
+
+document.getElementById('themeSwitch').addEventListener('change', function(event) {
+    const themeLabel = document.getElementById('themeLabel');
+    if (event.target.checked) {
+        document.body.classList.add('dark-theme');
+        document.body.classList.remove('light-theme');
+        themeLabel.innerText = 'Light Theme';
+    } else {
+        document.body.classList.add('light-theme');
+        document.body.classList.remove('dark-theme');
+        themeLabel.innerText = 'Dark Theme';
+    }
+});
+
+document.getElementById('copyButton').addEventListener('click', function() {
+    const summaryText = document.getElementById('summary').innerText;
+    navigator.clipboard.writeText(summaryText).then(() => {
+        alert('Summary copied to clipboard!');
+    }).catch(err => {
+        alert('Failed to copy: ', err);
+    });
+});
+
+document.getElementById('inputText').addEventListener('input', function() {
+    const wordCount = this.value.split(/\s+/).filter(word => word.length > 0).length;
+    document.getElementById('wordCount').innerText = `Word Count: ${wordCount}`;
+});
+
+document.getElementById('setBackgroundButton').addEventListener('click', function() {
+    const backgroundImageURL = document.getElementById('backgroundImageURL').value;
+    document.body.style.backgroundImage = `url('${backgroundImageURL}')`;
+});
+
+function summarizeText() {
+    const text = document.getElementById('inputText').value;
+    const summaryLength = document.getElementById('summaryLength').value;
+
+    // Define number of sentences based on summary length
+    let maxSentences;
+    if (summaryLength === 'short') {
+        maxSentences = 2;
+    } else if (summaryLength === 'medium') {
+        maxSentences = 5;
+    } else {
+        maxSentences = 10;
+    }
+
+    // Split the text into sentences
+    const sentences = text.match(/[^\.!\?]+[\.!\?]+/g);
+    if (!sentences) {
+        document.getElementById('summary').innerText = "Please enter valid text.";
+        document.getElementById('loading').style.display = 'none'; // Hide loading animation
+        return;
+    }
+
+    // Calculate word frequencies
+    const wordCounts = {};
+    const words = text.match(/\w+/g);
+    words.forEach(word => {
+        word = word.toLowerCase();
+        wordCounts[word] = (wordCounts[word] || 0) + 1;
+    });
+
+    // Score sentences based on word frequencies and sentence position
+    const sentenceScores = sentences.map((sentence, index) => {
+        const words = sentence.match(/\w+/g) || [];
+        let score = 0;
+        words.forEach(word => {
+            word = word.toLowerCase();
+            if (wordCounts[word]) {
+                score += wordCounts[word];
+            }
+        });
+
+        // Add additional score based on the position of the sentence (e.g., first sentence gets more weight)
+        score += (sentences.length - index) / sentences.length;
+        return { sentence, score };
+    });
+
+    // Sort sentences by score and select the top ones
+    const sortedSentences = sentenceScores.sort((a, b) => b.score - a.score);
+    const summary = sortedSentences.slice(0, maxSentences).map(item => item.sentence).join(' ');
+
+    // Display the summary
+    document.getElementById('summary').innerText = summary;
+    document.getElementById('loading').style.display = 'none'; // Hide loading animation
+
+    // Show copy button and word count
+    document.getElementById('copyButton').style.display = 'inline-block';
+    const summaryWordCount = summary.split(/\s+/).filter(word => word.length > 0).length;
+    document.getElementById('wordCount').innerText = `Input Word Count: ${words.length}, Summary Word Count: ${summaryWordCount}`;
+}
