@@ -1,37 +1,17 @@
 document.getElementById('textForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the form from submitting and refreshing the page
-    document.getElementById('loading').style.display = 'block'; // Show loading animation
-    setTimeout(() => {
-        summarizeText();
-    }, 1000); // Simulate a delay for loading animation
-});
-
-document.getElementById('themeSwitch').addEventListener('change', function(event) {
-    const themeLabel = document.getElementById('themeLabel');
-    if (event.target.checked) {
-        document.body.classList.add('dark-theme');
-        document.body.classList.remove('light-theme');
-        themeLabel.innerText = 'Light Theme';
-    } else {
-        document.body.classList.add('light-theme');
-        document.body.classList.remove('dark-theme');
-        themeLabel.innerText = 'Dark Theme';
-    }
-});
-
-document.getElementById('copyButton').addEventListener('click', function() {
-    const summaryText = document.getElementById('summary').innerText;
-    navigator.clipboard.writeText(summaryText).then(() => {
-        alert('Summary copied to clipboard!');
-    }).catch(err => {
-        alert('Failed to copy: ', err);
-    });
+    summarizeText();
 });
 
 document.getElementById('inputText').addEventListener('input', function() {
-    const wordCount = this.value.split(/\s+/).filter(word => word.length > 0).length;
-    document.getElementById('wordCount').innerText = `Word Count: ${wordCount}`;
+    updateInputWordCount();
 });
+
+function updateInputWordCount() {
+    const text = document.getElementById('inputText').value;
+    const wordCount = text.match(/\w+/g) ? text.match(/\w+/g).length : 0;
+    document.getElementById('inputWordCount').innerText = `Word Count: ${wordCount}`;
+}
 
 function summarizeText() {
     const text = document.getElementById('inputText').value;
@@ -51,7 +31,7 @@ function summarizeText() {
     const sentences = text.match(/[^\.!\?]+[\.!\?]+/g);
     if (!sentences) {
         document.getElementById('summary').innerText = "Please enter valid text.";
-        document.getElementById('loading').style.display = 'none'; // Hide loading animation
+        document.getElementById('outputWordCount').innerText = "Word Count: 0";
         return;
     }
 
@@ -85,10 +65,8 @@ function summarizeText() {
 
     // Display the summary
     document.getElementById('summary').innerText = summary;
-    document.getElementById('loading').style.display = 'none'; // Hide loading animation
 
-    // Show copy button and word count
-    document.getElementById('copyButton').style.display = 'inline-block';
-    const summaryWordCount = summary.split(/\s+/).filter(word => word.length > 0).length;
-    document.getElementById('wordCount').innerText = `Input Word Count: ${words.length}, Summary Word Count: ${summaryWordCount}`;
+    // Update output word count
+    const outputWordCount = summary.match(/\w+/g) ? summary.match(/\w+/g).length : 0;
+    document.getElementById('outputWordCount').innerText = `Word Count: ${outputWordCount}`;
 }
