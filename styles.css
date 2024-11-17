@@ -1,3 +1,4 @@
+/* General Styles */
 body, html {
     margin: 0;
     padding: 0;
@@ -7,6 +8,7 @@ body, html {
     overflow: hidden;
 }
 
+/* Background Image and Overlay */
 body {
     background: url('https://images2.alphacoders.com/261/thumb-1920-26102.jpg') no-repeat center center fixed;
     background-size: cover;
@@ -22,6 +24,7 @@ body {
     z-index: 1;
 }
 
+/* Floating Particles */
 .particles {
     position: absolute;
     top: 0;
@@ -53,10 +56,11 @@ body {
     }
 }
 
+/* Left Section */
 .left-section {
-    position:relative;
+    position: relative;
     left: 5%;
-    top: 60%;
+    top: 10%;
     transform: translateY(-50%);
     color: #e7e4dc;
     z-index: 3;
@@ -87,4 +91,122 @@ body {
     font-size: 1.2rem;
     line-height: 1.6;
     color: #dcdcdc;
-    margin-bottom:[_{{{CITATION{{{_1{](https://github.com/antydemant/lessons-2020/tree/0c6095f45bfd841914ac8e7e25f8c9df273dea69/02-closure-and-context%2Fhomework%2FREADME.md)
+    margin-bottom: 30px;
+}
+
+/* Login Container */
+.login-container {
+    position: fixed;
+    right: 10%;
+    top: 10%;
+    width: 350px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 3;
+}
+
+.login-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #1a3c40;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #b5c8bf;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #f7f7f7;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-container input:focus {
+    border-color: #006d77;
+    box-shadow: 0px 0px 5px rgba(0, 109, 119, 0.5);
+    outline: none;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #006d77;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.login-container button:hover {
+    background: #004f54;
+    transform: scale(1.03);
+}
+
+/* Ripple Effect */
+.login-container button:active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+    from {
+        transform: scale(0);
+        opacity: 1;
+    }
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Text Form Styles */
+#textForm {
+    margin-top: 30px;
+    text-align: center;
+}
+
+#inputText {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    resize: vertical;
+}
+
+#textForm button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#textForm button:hover {
+    background-color: #45a049;
+}
+
+#summary {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+#inputWordCount, #outputWordCount {
+    margin-top: 10px;
+    font-weight: bold;
+}
